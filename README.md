@@ -1,2 +1,33 @@
 # Web-Crawler
 project for Web-Crawler
+# -*- coding = utf-8 -*-
+# @Time    :$ {DATE}$ {TIME}
+# @Author  :GT
+# @File    :$ {NAME}.py
+
+# 导出要使用的库
+from urllib import request
+from bs4 import BeautifulSoup
+# 定义url 地址
+url = 'http://www.jianshu.com'
+# 模拟浏览器访问
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0;  Win64; x64) '
+                         'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'}
+# 定义访问地址
+page = request.Request(url, headers=headers)
+# 打开并用utf-8读取页面信息
+page_info = request.urlopen(page).read().decode('utf-8')
+# 使用Beautifulsoup库浏览页面信息
+soup = BeautifulSoup(page_info, 'html.parser')
+
+titles = soup.find_all('a', 'title')
+
+for title in titles:
+    print(title.string)
+    print("http://www.jianshu.com" + title.get('href'))
+# 写入文档
+with open(r"D:\Python\test1\articles.txt", "w") as file:
+    for title in titles:
+        file.write(title.string + '\n')
+        file.write("http://www.jianshu.com" + title.get('href') + '\n\n')
+
