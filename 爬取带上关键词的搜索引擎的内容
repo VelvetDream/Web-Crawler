@@ -1,0 +1,17 @@
+import requests
+# 定义搜索内容为Python
+keyword = "Python"
+# 定义kv参数=keyword=Python
+kv = {"wd": "keyword"}
+# noinspection PyBroadException
+try:
+    # 访问百度，并且添加参数keyword = "Python"
+    r = requests.get('http://www.baidu.com/s', params=kv)
+    # 打印request方法get到的网址地址进行查看
+    print(r.request.url)
+    r.raise_for_status()
+    # 打印状态码
+    print(r.status_code)
+    print(len(r.text))
+except:
+    print("失败")
