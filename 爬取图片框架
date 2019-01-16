@@ -1,0 +1,26 @@
+import requests
+import os
+
+url = "http://img0.dili360.com/pic/2018/09/26/" \
+      "5bab38dfd80333y53304453_t.jpg@!rw9"
+# 定义根目录
+root = "d://test//"
+# 定义路径为/得最后一部分，其实就是jpg文件
+path = root + url.split('/')[-1]
+try:
+    # 查看路径是否存在，如果不存在创建根目录
+    if not os.path.exists(root):
+        os.mkdir(root)
+    if not os.path.exists(path):
+        r = requests.get(url)
+        # 将图片写入路径
+        with open(path, 'wb') as f:
+            f.write(r.content)
+            f.close()
+            print("图片保存成功")
+    else:
+        print("图片已存在")
+except:
+    print("爬取失败")
+
+
