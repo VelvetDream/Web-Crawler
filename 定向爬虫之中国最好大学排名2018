@@ -1,0 +1,69 @@
+import requests
+from bs4 import BeautifulSoup
+import bs4
+
+
+# 1定义获取网页信息
+def getHTMLText(url):
+    # 3是用try...except 完成结构框架，方便调试
+    # noinspection PyBroadException
+    # pycharm会报提示，过于宽泛，需要指定精准 except,强迫症必须要解决
+    try:
+        r = requests.get(url, timeout=30)
+    # 3获取状态码
+        r.raise_for_status()
+    # 3因为有中文，所以需要转换编码
+        r.encoding = r.apparent_encoding
+    # 3返回给程序
+        return r.text
+    except:
+        print("产生异常")
+        return ""
+
+
+# 4使用beautifullsoup提取html信息中关键的数据，并添加到列表中
+
+# 1将获取到的html放在自己定义的ulist列表中
+def fillUnivList(ulist, html):
+    # 4使用bs4库解析网页
+    soup = BeautifulSoup(html, "html.parser")
+    # 4使用for语句遍历查找tbody下的孩子标签,
+    for tr in soup.find('tbody').children:
+        # 4检测tr标签，如果tr标签不是bs4定义的tag类型，将过滤掉
+        if isinstance(tr, bs4.element.Tag):
+            # 4tr标签查询完后，需要查询td标签，并将td标签存在tds里，
+            tds = tr('td')
+            # ulist 里添加我们需要的信息，分别是大学名称，大学排名，大学评分
+            ulist.append([tds[0].string, tds[1].string, tds[2].string])
+
+
+# 1将获取的ulist信息打印出来，num是指需要多少个学校
+def printUnivList(ulist, num):
+    # 定义输出模板的变量,并增加宽度设定
+    # {3}表示打印输出时，需要填充时使用format函数的第三个变量进行填充，也就是使用中文空格进行填充
+    tplt = "{0:^10}\t{1:{3}^10}\t{2:^10}"
+    # 5定义输出格式,如果看不懂可以去搜下format函数，学习下
+    print(tplt.format("排名", "学校名称", "评分", chr(12288)))
+    # 5将dr信息用简短的变量u来代替，并用for...in 将每所学校信息打印出来
+    for i in range(num):
+        u = ulist[i]
+        print(tplt.format(u[0], u[1], u[2], chr(12288)))
+    print("Suc" + str(num))
+
+    # 2定义调用函数
+
+
+def main():
+    # 将大学信息写进列表中，定义列表名uinfo
+    uinfo = []
+    # 给出url地址信息
+    url = "http://www.zuihaodaxue.com/zuihaodaxuepaiming2018.html"
+    # 用requests库中的get方法，将url信息转换成HTML信息
+    html = getHTMLText(url)
+    # 将提取的信息放在uinfo变量中
+    fillUnivList(uinfo, html)
+    # 打印大学信息,我们给出的排名信息是前30位
+    printUnivList(uinfo, 30)
+
+
+main()
