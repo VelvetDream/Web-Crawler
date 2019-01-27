@@ -1,0 +1,66 @@
+import re
+import requests
+# ls = re.findall(r'[1-9]\d{5}', "BIT100081 TSU100084")
+# print(ls)
+# for m in re.finditer(r'[1-9]\d{5}', 'BIT100081 TSU100084'):
+#     if m:
+#         print(m.group(0))
+# m = re.search(r'[1-9]\d{5}', 'BIT100081 TSU100084')
+# print(m.string)
+# print(m.re)
+# print(m.pos)
+# print(m.endpos)
+
+
+def getHTMLText(url):
+    try:
+        r = requests.get(url, txt)
+        r.raise_for_status()
+        r.encoding = r.apparent_encoding
+        return r.text
+    # noinspection PyBroadException
+    except:
+        return"get异常"
+
+
+def parsePage(ilt, html):
+    try:
+        plt = re.findall(r'\"view_prise\"\:\"[\d\.]*\"', html)
+        tlt = re.findall(r'\"raw_title\"\:\".*?\"', html)
+        for i in range(len(plt)):
+            # eval 执行表达式，并返回表达式的值
+            price = eval(plt[i].split(':')[1])
+            title = eval(tlt[i].split(':')[1])
+    except:
+        print("parse异常")
+
+
+# 打印输出模板
+
+def printGoodsList(ilt):
+    tplt = "{:4}\t{:8}\t{:16}"
+    print(tplt.format("序号", "价格", "商品名称"))
+    count = 0
+    for g in ilt:
+        count = count + 1
+        print(tplt.format(count, g[0], g[1]))
+    print("print打印输出异常")
+
+
+# 1 main():
+def main():
+    goods = "书包"
+    depth = 3
+    start_url = "https://s.taobao.com/search?q=" + goods
+    infoList = []
+    for i in range(depth):
+        try:
+            url = start_url + '&s=' + str(44 * i)
+            html = getHTMLText(url)
+            parsePage(infoList, html)
+        except:
+            continue
+    printGoodsList(infoList)
+
+
+main()
